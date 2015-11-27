@@ -1,0 +1,49 @@
+在需要对img进行onload事件绑定的时候，一般大家都会想到用常规的方法进行事件绑定，如下：
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"> 
+<head> 
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+<title>img onload事件绑定（错误用法）</title> 
+<script type='text/javascript'> 
+window.onload = function(){ 
+var img = document.getElementById('imgId'); 
+img.onload = function(){ 
+alert(1); 
+}; 
+}; 
+</script> 
+</head> 
+<body> 
+<img src='images/06.jpg' id='imgId'/> 
+</body> 
+</html> 
+此时大家会发现alert(1)并没有执行，这是什么原因呢？特别是在ie和ff浏览器下。 
+而且在用到jquery插件库的时候会发现，alert除了在ie和Opera浏览器不弹出来外，其他浏览器均弹出来，这是为什么呢？！ 
+主要是window.onload事件是在页面dom元素加载完后执行，也就包括了img图片中src加载完成。那么img.onload 就不会执行了， 
+因为其是监听img的src是否加载完成。 
+那么，如何对img图片进行onload事件绑定呢？具体代码如下：
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"> 
+<head> 
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+<title>img onload事件绑定（正确用法）</title> 
+<script type='text/javascript'> 
+window.onload = function(){ 
+var img = document.getElementById('imgId'); 
+var src = img.getAttribute('src'); 
+img.setAttribute('src',''); 
+img.onload = function(){ 
+alert(1); 
+}; 
+img.setAttribute('src',src); 
+}; 
+</script> 
+</head> 
+<body> 
+<img src='images/06.jpg' id='imgId'/> 
+</body> 
+</html> 
+这种方法，在各浏览器下均执行alert(1)。 
+也就是在页面dom元素加载完成后，获得img的dom对象，获得其src属性，再将其src设置为‘'空，然后监听img的onload事件，最后再设置img的src属性即可。 
